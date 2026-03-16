@@ -463,6 +463,7 @@ async function save() {
             statut: form.value.statut,
             en_avant: form.value.en_avant,
             ministere_id: auth.user?.ministere_id || 1,
+            tags: form.value.tags  // AJOUTER CETTE LIGNE
         }
 
         if (imageUrl) payload.image_une = imageUrl
