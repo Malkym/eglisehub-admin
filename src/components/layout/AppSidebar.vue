@@ -17,13 +17,8 @@
 
       <div class="nav-group">
         <span class="nav-group-label">Principal</span>
-        <RouterLink
-          v-for="item in mainNav"
-          :key="item.to"
-          :to="item.to"
-          class="nav-item"
-          :class="{ active: isActive(item) }"
-        >
+        <RouterLink v-for="item in mainNav" :key="item.to" :to="item.to" class="nav-item"
+          :class="{ active: isActive(item) }">
           <span class="nav-icon" v-html="item.icon"></span>
           <span class="nav-label">{{ item.label }}</span>
           <span v-if="item.badge" class="nav-badge">{{ item.badge }}</span>
@@ -32,13 +27,8 @@
 
       <div class="nav-group">
         <span class="nav-group-label">Contenu</span>
-        <RouterLink
-          v-for="item in contentNav"
-          :key="item.to"
-          :to="item.to"
-          class="nav-item"
-          :class="{ active: isActive(item) }"
-        >
+        <RouterLink v-for="item in contentNav" :key="item.to" :to="item.to" class="nav-item"
+          :class="{ active: isActive(item) }">
           <span class="nav-icon" v-html="item.icon"></span>
           <span class="nav-label">{{ item.label }}</span>
         </RouterLink>
@@ -46,13 +36,8 @@
 
       <div v-if="auth.isSuperAdmin" class="nav-group">
         <span class="nav-group-label">Administration</span>
-        <RouterLink
-          v-for="item in adminNav"
-          :key="item.to"
-          :to="item.to"
-          class="nav-item"
-          :class="{ active: isActive(item) }"
-        >
+        <RouterLink v-for="item in adminNav" :key="item.to" :to="item.to" class="nav-item"
+          :class="{ active: isActive(item) }">
           <span class="nav-icon" v-html="item.icon"></span>
           <span class="nav-label">{{ item.label }}</span>
         </RouterLink>
@@ -73,7 +58,7 @@
         <button class="sidebar-logout" @click="handleLogout" title="Déconnexion">
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
         </button>
       </div>
@@ -87,13 +72,13 @@ import { computed } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-const auth   = useAuthStore()
-const route  = useRoute()
+const auth = useAuthStore()
+const route = useRoute()
 const router = useRouter()
 
 // User info
-const userName      = computed(() => `${auth.user?.name || ''} ${auth.user?.prenom || ''}`.trim())
-const userInitials  = computed(() => {
+const userName = computed(() => `${auth.user?.name || ''} ${auth.user?.prenom || ''}`.trim())
+const userInitials = computed(() => {
   const n = auth.user?.name?.[0] || ''
   const p = auth.user?.prenom?.[0] || ''
   return (n + p).toUpperCase()
@@ -101,8 +86,8 @@ const userInitials  = computed(() => {
 const userRole = computed(() => auth.isSuperAdmin ? 'Super Admin' : 'Admin Ministère')
 
 // Ministère info
-const ministereName   = computed(() => auth.user?.ministere?.nom || 'EgliseHub')
-const ministreDomain  = computed(() => {
+const ministereName = computed(() => auth.user?.ministere?.nom || 'EgliseHub')
+const ministreDomain = computed(() => {
   const sub = auth.user?.ministere?.sous_domaine
   return sub ? `${sub}.eglisehub.org` : 'eglisehub.org'
 })
@@ -180,18 +165,35 @@ const contentNav = [
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
     </svg>`,
   },
+  {
+    to: '/comments', label: 'Commentaires',
+    icon: `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>`,
+  },
 ]
 
 const adminNav = [
   {
-    to: '/admin/ministeres', label: 'Ministères',
+    to: '/admin/ministeres',
+    label: 'Ministères',
     icon: `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
     </svg>`,
   },
   {
-    to: '/users', label: 'Utilisateurs',
+    to: '/logs',
+    label: 'Logs système',
+    icon: `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
+        d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>`,
+  },
+  {
+    to: '/users',
+    label: 'Utilisateurs',
     icon: `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"
         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -222,7 +224,10 @@ async function handleLogout() {
   overflow-y: auto;
   scrollbar-width: none;
 }
-.sidebar::-webkit-scrollbar { display: none; }
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
 
 /* Logo */
 .sidebar-logo {
@@ -230,9 +235,10 @@ async function handleLogout() {
   align-items: center;
   gap: 10px;
   padding: 20px 16px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   margin-bottom: 8px;
 }
+
 .sidebar-logo-icon {
   width: 36px;
   height: 36px;
@@ -243,12 +249,14 @@ async function handleLogout() {
   align-items: center;
   justify-content: center;
 }
+
 .sidebar-logo-icon span {
   color: #93C5FD;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .04em;
 }
+
 .sidebar-logo-name {
   color: #F1F5F9;
   font-size: 13px;
@@ -257,6 +265,7 @@ async function handleLogout() {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .sidebar-logo-url {
   color: #475569;
   font-size: 10px;
@@ -271,11 +280,13 @@ async function handleLogout() {
   flex-direction: column;
   gap: 16px;
 }
+
 .nav-group {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
+
 .nav-group-label {
   display: block;
   color: #334155;
@@ -285,6 +296,7 @@ async function handleLogout() {
   text-transform: uppercase;
   padding: 4px 8px 6px;
 }
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -298,24 +310,38 @@ async function handleLogout() {
   transition: all 0.12s ease;
   position: relative;
 }
+
 .nav-item:hover {
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   color: #CBD5E1;
 }
+
 .nav-item.active {
-  background: rgba(30,58,138,0.35);
+  background: rgba(30, 58, 138, 0.35);
   color: #93C5FD;
   box-shadow: inset 3px 0 0 #3B82F6;
 }
+
 .nav-icon {
   display: flex;
   align-items: center;
   flex-shrink: 0;
   opacity: 0.7;
 }
-.nav-item.active .nav-icon { opacity: 1; }
-.nav-item:hover .nav-icon { opacity: 0.9; }
-.nav-label { flex: 1; font-weight: 450; }
+
+.nav-item.active .nav-icon {
+  opacity: 1;
+}
+
+.nav-item:hover .nav-icon {
+  opacity: 0.9;
+}
+
+.nav-label {
+  flex: 1;
+  font-weight: 450;
+}
+
 .nav-badge {
   background: #C41E3A;
   color: #fff;
@@ -330,9 +356,10 @@ async function handleLogout() {
 /* Footer */
 .sidebar-footer {
   padding: 12px 8px;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   margin-top: auto;
 }
+
 .sidebar-user {
   display: flex;
   align-items: center;
@@ -342,7 +369,11 @@ async function handleLogout() {
   transition: background .12s;
   cursor: pointer;
 }
-.sidebar-user:hover { background: rgba(255,255,255,0.04); }
+
+.sidebar-user:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .sidebar-avatar {
   width: 32px;
   height: 32px;
@@ -356,16 +387,19 @@ async function handleLogout() {
   font-weight: 600;
   color: #93C5FD;
 }
+
 .sidebar-user-name {
   color: #E2E8F0;
   font-size: 12px;
   font-weight: 500;
 }
+
 .sidebar-user-role {
   color: #475569;
   font-size: 10px;
   margin-top: 1px;
 }
+
 .sidebar-logout {
   margin-left: auto;
   background: none;
@@ -378,5 +412,8 @@ async function handleLogout() {
   align-items: center;
   transition: color .12s;
 }
-.sidebar-logout:hover { color: #F87171; }
+
+.sidebar-logout:hover {
+  color: #F87171;
+}
 </style>

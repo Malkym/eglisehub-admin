@@ -3,13 +3,8 @@
 
     <!-- Tabs navigation -->
     <div class="settings-tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.key"
-        class="settings-tab"
-        :class="{ active: activeTab === tab.key }"
-        @click="activeTab = tab.key"
-      >
+      <button v-for="tab in tabs" :key="tab.key" class="settings-tab" :class="{ active: activeTab === tab.key }"
+        @click="activeTab = tab.key">
         <span v-html="tab.icon"></span>
         {{ tab.label }}
       </button>
@@ -24,7 +19,7 @@
             <div class="form-grid">
               <div class="form-group span-2">
                 <label class="form-label">Nom du ministère</label>
-                <input v-model="general.nom" class="form-input" placeholder="Centre Révélation du Christ"/>
+                <input v-model="general.nom" class="form-input" placeholder="Centre Révélation du Christ" />
               </div>
               <div class="form-group">
                 <label class="form-label">Type</label>
@@ -38,23 +33,24 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Email de contact</label>
-                <input v-model="general.email_contact" class="form-input" type="email" placeholder="contact@crc.org"/>
+                <input v-model="general.email_contact" class="form-input" type="email" placeholder="contact@crc.org" />
               </div>
               <div class="form-group">
                 <label class="form-label">Téléphone</label>
-                <input v-model="general.telephone" class="form-input" placeholder="+236 74 02 67 55"/>
+                <input v-model="general.telephone" class="form-input" placeholder="+236 74 02 67 55" />
               </div>
               <div class="form-group">
                 <label class="form-label">Ville</label>
-                <input v-model="general.ville" class="form-input" placeholder="Bangui"/>
+                <input v-model="general.ville" class="form-input" placeholder="Bangui" />
               </div>
               <div class="form-group span-2">
                 <label class="form-label">Adresse</label>
-                <input v-model="general.adresse" class="form-input" placeholder="Fatima Sandoumbé, rue deux jumeaux Bamboula"/>
+                <input v-model="general.adresse" class="form-input"
+                  placeholder="Fatima Sandoumbé, rue deux jumeaux Bamboula" />
               </div>
               <div class="form-group">
                 <label class="form-label">Pays</label>
-                <input v-model="general.pays" class="form-input" placeholder="République centrafricaine"/>
+                <input v-model="general.pays" class="form-input" placeholder="République centrafricaine" />
               </div>
               <div class="form-group span-2">
                 <label class="form-label">Description</label>
@@ -103,17 +99,8 @@
               <div class="color-item" v-for="color in colorFields" :key="color.key">
                 <label class="form-label">{{ color.label }}</label>
                 <div class="color-input-wrap">
-                  <input
-                    type="color"
-                    v-model="theme[color.key]"
-                    class="color-picker"
-                  />
-                  <input
-                    v-model="theme[color.key]"
-                    class="form-input color-hex"
-                    placeholder="#1E3A8A"
-                    maxlength="7"
-                  />
+                  <input type="color" v-model="theme[color.key]" class="color-picker" />
+                  <input v-model="theme[color.key]" class="form-input color-hex" placeholder="#1E3A8A" maxlength="7" />
                 </div>
               </div>
             </div>
@@ -142,14 +129,9 @@
           <div class="card">
             <div class="card-title">Style des boutons</div>
             <div class="btn-styles">
-              <button
-                v-for="style in btnStyles"
-                :key="style.key"
-                class="btn-style-preview"
-                :class="{ active: theme.style_boutons === style.key }"
-                :style="{ borderRadius: style.radius }"
-                @click="theme.style_boutons = style.key"
-              >
+              <button v-for="style in btnStyles" :key="style.key" class="btn-style-preview"
+                :class="{ active: theme.style_boutons === style.key }" :style="{ borderRadius: style.radius }"
+                @click="theme.style_boutons = style.key">
                 {{ style.label }}
               </button>
             </div>
@@ -169,22 +151,19 @@
           <!-- Logo -->
           <div class="card">
             <div class="card-title">Logo</div>
-            <div
-              class="logo-drop"
-              :class="{ 'has-logo': theme.logo_preview }"
-              @click="$refs.logoInput.click()"
-            >
-              <img v-if="theme.logo_preview" :src="theme.logo_preview" class="logo-preview"/>
+            <div class="logo-drop" :class="{ 'has-logo': theme.logo_preview }" @click="$refs.logoInput.click()">
+              <img v-if="theme.logo_preview" :src="theme.logo_preview" class="logo-preview" />
               <div v-else class="logo-placeholder">
                 <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span>Cliquer pour choisir</span>
               </div>
             </div>
-            <input ref="logoInput" type="file" accept="image/*" style="display:none" @change="handleLogo"/>
-            <button v-if="theme.logo_preview" class="remove-btn" @click="theme.logo_preview = null; theme.logo_file = null">
+            <input ref="logoInput" type="file" accept="image/*" style="display:none" @change="handleLogo" />
+            <button v-if="theme.logo_preview" class="remove-btn"
+              @click="theme.logo_preview = null; theme.logo_file = null">
               Supprimer
             </button>
           </div>
@@ -195,7 +174,7 @@
             <div class="theme-preview" :style="{ '--primary': theme.couleur_primaire }">
               <div class="preview-header" :style="{ background: theme.couleur_menu || theme.couleur_primaire }">
                 <div class="preview-logo">
-                  <img v-if="theme.logo_preview" :src="theme.logo_preview" style="height:20px"/>
+                  <img v-if="theme.logo_preview" :src="theme.logo_preview" style="height:20px" />
                   <span v-else style="color:#fff;font-size:12px;font-weight:700">LOGO</span>
                 </div>
                 <div class="preview-nav">
@@ -209,12 +188,10 @@
                   <div class="preview-title" :style="{ fontFamily: theme.police_titre, color: theme.couleur_primaire }">
                     Titre principal
                   </div>
-                  <button class="preview-btn"
-                    :style="{
-                      background: theme.couleur_primaire,
-                      borderRadius: theme.style_boutons === 'rounded' ? '8px' : theme.style_boutons === 'pill' ? '999px' : '2px'
-                    }"
-                  >
+                  <button class="preview-btn" :style="{
+                    background: theme.couleur_primaire,
+                    borderRadius: theme.style_boutons === 'rounded' ? '8px' : theme.style_boutons === 'pill' ? '999px' : '2px'
+                  }">
                     Rejoindre
                   </button>
                 </div>
@@ -233,7 +210,7 @@
             <div class="card-title">Référencement (SEO)</div>
             <div class="form-group">
               <label class="form-label">Titre SEO</label>
-              <input v-model="seo.meta_titre" class="form-input" placeholder="Centre Révélation du Christ - Bangui"/>
+              <input v-model="seo.meta_titre" class="form-input" placeholder="Centre Révélation du Christ - Bangui" />
               <div class="char-count" :class="{ warn: seo.meta_titre?.length > 60 }">
                 {{ seo.meta_titre?.length || 0 }}/60
               </div>
@@ -254,21 +231,17 @@
                   <button class="tag-remove" @click="removeKeyword(kw)">×</button>
                 </div>
               </div>
-              <input
-                v-model="keywordInput"
-                class="form-input"
-                placeholder="Ajouter un mot-clé (Entrée)"
-                @keydown.enter.prevent="addKeyword"
-              />
+              <input v-model="keywordInput" class="form-input" placeholder="Ajouter un mot-clé (Entrée)"
+                @keydown.enter.prevent="addKeyword" />
             </div>
             <div class="form-group">
               <label class="form-label">Google Analytics ID <span class="optional">(optionnel)</span></label>
-              <input v-model="seo.google_analytics" class="form-input" placeholder="G-XXXXXXXXXX"/>
+              <input v-model="seo.google_analytics" class="form-input" placeholder="G-XXXXXXXXXX" />
             </div>
             <div class="toggle-row">
               <span class="toggle-label">Indexable par Google</span>
               <label class="toggle">
-                <input type="checkbox" v-model="seo.indexable"/>
+                <input type="checkbox" v-model="seo.indexable" />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -332,12 +305,8 @@
             </div>
             <div class="social-field">
               <label class="form-label">{{ s.label }}</label>
-              <input
-                v-model="social[s.key]"
-                class="form-input"
-                :placeholder="s.placeholder"
-                :type="s.key === 'whatsapp' ? 'tel' : 'url'"
-              />
+              <input v-model="social[s.key]" class="form-input" :placeholder="s.placeholder"
+                :type="s.key === 'whatsapp' ? 'tel' : 'url'" />
             </div>
           </div>
         </div>
@@ -347,6 +316,222 @@
             <span v-else>Enregistrer les réseaux</span>
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Tab: Contenu (mis à jour) -->
+    <div v-if="activeTab === 'content'" class="tab-content fade-in">
+      <div class="form-layout">
+        <div class="form-main">
+
+          <!-- Identité textuelle -->
+          <div class="card">
+            <div class="card-title">Textes du site</div>
+            <div class="form-group">
+              <label class="form-label">Slogan <span class="optional">(affiché dans le hero)</span></label>
+              <input v-model="content.slogan" class="form-input"
+                placeholder="Pillons l'enfer pour peupler le Royaume" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Qui sommes-nous <span class="optional">(bloc À propos)</span></label>
+              <textarea v-model="content.qui_sommes_nous" class="form-input" rows="4"
+                placeholder="Présentation de votre ministère..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Notre Vision</label>
+              <textarea v-model="content.vision" class="form-input" rows="3"
+                placeholder="Révéler Christ au monde entier..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Notre Mission</label>
+              <textarea v-model="content.mission" class="form-input" rows="3"
+                placeholder="Diffuser l'Évangile, former des disciples..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nos Valeurs</label>
+              <textarea v-model="content.valeur" class="form-input" rows="3"
+                placeholder="Aimer Dieu et le prochain, Servir avec excellence, Vivre dans l'intégrité..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Année de fondation</label>
+              <input v-model="content.annee_fondation" class="form-input" type="number" min="1000" max="2100"
+                placeholder="2009" />
+              <div class="form-hint">Affiché dans la section "Qui sommes-nous"</div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-primary" @click="saveContent('textes')" :disabled="saving">
+                <span v-if="saving === 'textes'" class="spinner-sm"></span>
+                <span v-else>Enregistrer les textes</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Culte en direct -->
+          <div class="card">
+            <div class="card-title">Culte en direct</div>
+            <div class="toggle-row" style="margin-bottom:16px">
+              <div>
+                <span class="toggle-label">Activer le culte en direct</span>
+                <div style="font-size:11px;color:#94A3B8;margin-top:2px">Affiche une bannière EN DIRECT sur le site
+                </div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" v-model="content.live_actif" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div v-if="content.live_actif">
+              <div class="form-group">
+                <label class="form-label">ID de la vidéo YouTube Live <span class="req">*</span></label>
+                <div class="youtube-input-wrap">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"
+                    style="color:#FF0000;flex-shrink:0">
+                    <path
+                      d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                  </svg>
+                  <input v-model="content.live_youtube_id" class="form-input"
+                    placeholder="Ex: dQw4w9WgXcQ (l'ID après ?v= dans l'URL YouTube)" />
+                </div>
+                <div v-if="content.live_youtube_id" class="youtube-preview">
+                  <img :src="`https://img.youtube.com/vi/${content.live_youtube_id}/mqdefault.jpg`" class="yt-thumb"
+                    :alt="'Aperçu YouTube'" />
+                  <div class="yt-link">
+                    <a :href="`https://youtube.com/watch?v=${content.live_youtube_id}`" target="_blank" class="yt-url">
+                      youtube.com/watch?v={{ content.live_youtube_id }}
+                    </a>
+                    <div class="yt-ok">
+                      <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Vidéo valide
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Message affiché sur la bannière</label>
+                <input v-model="content.live_prochain" class="form-input"
+                  placeholder="Culte du Dimanche - 9h00 - Rejoignez-nous !" />
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-primary" @click="saveContent('live')" :disabled="saving">
+                <span v-if="saving === 'live'" class="spinner-sm"></span>
+                <span v-else>Enregistrer le live</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dons -->
+          <div class="card">
+            <div class="card-title">Dons & Offrandes</div>
+            <div class="toggle-row" style="margin-bottom:16px">
+              <div>
+                <span class="toggle-label">Activer les dons en ligne</span>
+                <div style="font-size:11px;color:#94A3B8;margin-top:2px">Affiche la section dons sur le site public
+                </div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" v-model="content.don_actif" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div v-if="content.don_actif">
+              <div class="form-group">
+                <label class="form-label">Numéro Orange Money principal</label>
+                <div class="phone-input-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    style="flex-shrink:0; color:#FF6600">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <input v-model="content.orange_money_numero" class="form-input" placeholder="+236 74 02 67 55"
+                    type="tel" />
+                </div>
+                <div class="form-hint">Ce numéro recevra les paiements Mobile Money.</div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-primary" @click="saveContent('dons')" :disabled="saving">
+                <span v-if="saving === 'dons'" class="spinner-sm"></span>
+                <span v-else>Enregistrer les dons</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-sidebar">
+
+          <!-- Pasteur principal -->
+          <div class="card">
+            <div class="card-title">Pasteur / Fondateur</div>
+            <div class="form-group">
+              <label class="form-label">Nom complet</label>
+              <input v-model="content.fondateur" class="form-input" placeholder="Pasteur Bangaya K. Freddy" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Titre / Fonction</label>
+              <input v-model="content.fondateur_titre" class="form-input" placeholder="Pasteur Principal & Fondateur" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Photo <span class="optional">(optionnel)</span></label>
+              <div class="photo-drop" :class="{ 'has-photo': content.fondateur_photo_preview }"
+                @click="$refs.photoInput.click()">
+                <img v-if="content.fondateur_photo_preview" :src="content.fondateur_photo_preview"
+                  class="photo-preview" />
+                <div v-else class="photo-placeholder">
+                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>Ajouter une photo</span>
+                </div>
+              </div>
+              <input ref="photoInput" type="file" accept="image/*" style="display:none"
+                @change="handleFondateurPhoto" />
+            </div>
+            <div class="card-footer">
+              <button class="btn-primary" @click="saveContent('fondateur')" :disabled="saving">
+                <span v-if="saving === 'fondateur'" class="spinner-sm"></span>
+                <span v-else>Enregistrer</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Aperçu live -->
+          <div v-if="content.live_actif && content.live_youtube_id" class="card">
+            <div class="card-title">Aperçu bannière live</div>
+            <div class="live-preview">
+              <div class="live-preview-dot"></div>
+              <div class="live-preview-info">
+                <div class="live-preview-label">EN DIRECT</div>
+                <div class="live-preview-text">{{ content.live_prochain || 'Culte en direct' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aperçu des valeurs -->
+          <div class="card">
+            <div class="card-title">Aperçu des valeurs</div>
+            <div class="value-preview"
+              :style="{ background: `${theme.couleur_primaire}10`, borderColor: theme.couleur_primaire }">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                :style="{ color: theme.couleur_primaire }">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <p class="value-preview-text">{{ content.valeur || 'Aimer Dieu et le prochain, Servir avec excellence, Vivre dans l\'intégrité' }}</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div v-if="activeTab === 'program'" class="tab-content fade-in">
+      <div class="admin-settings">
+        <WorshipSchedulesManager />
       </div>
     </div>
 
@@ -362,14 +547,15 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+import WorshipSchedulesManager from '@/components/settings/WorshipSchedulesManager.vue'
 
 const auth = useAuthStore()
 
-const activeTab   = ref('general')
-const saving      = ref(null)
-const ministere   = ref(null)
+const activeTab = ref('general')
+const saving = ref(null)
+const ministere = ref(null)
 const keywordInput = ref('')
-const toast       = ref({ show: false, type: 'success', message: '' })
+const toast = ref({ show: false, type: 'success', message: '' })
 
 const general = ref({
   nom: '', type: 'eglise', email_contact: '',
@@ -377,15 +563,15 @@ const general = ref({
 })
 
 const theme = ref({
-  couleur_primaire:   '#1E3A8A',
+  couleur_primaire: '#1E3A8A',
   couleur_secondaire: '#FFFFFF',
-  couleur_menu:       '#1E3A8A',
-  couleur_pied:       '#111827',
-  police_titre:       'Sora',
-  police_corps:       'DM Sans',
-  style_boutons:      'rounded',
-  logo_preview:       null,
-  logo_file:          null,
+  couleur_menu: '#1E3A8A',
+  couleur_pied: '#111827',
+  police_titre: 'Sora',
+  police_corps: 'DM Sans',
+  style_boutons: 'rounded',
+  logo_preview: null,
+  logo_file: null,
 })
 
 const seo = ref({
@@ -396,6 +582,24 @@ const seo = ref({
 const social = ref({
   facebook: '', youtube: '', whatsapp: '',
   instagram: '', twitter: '', tiktok: '', telegram: '',
+})
+
+const content = ref({
+  slogan: '',
+  vision: '',
+  mission: '',
+  valeur: '',
+  annee_fondation: '2009',
+  qui_sommes_nous: '',
+  live_youtube_id: '',
+  live_actif: false,
+  live_prochain: '',
+  orange_money_numero: '',
+  don_actif: false,
+  fondateur: '',
+  fondateur_titre: '',
+  fondateur_photo_preview: null,
+  fondateur_photo_file: null,
 })
 
 const tabs = [
@@ -427,21 +631,36 @@ const tabs = [
         d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
     </svg>`,
   },
+  {
+    key: 'content', label: 'Contenu',
+    icon: `<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+  </svg>`,
+  },
+{
+  key: 'program',
+  label: 'program',
+  icon: `<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+  </svg>`,
+}
 ]
 
 const colorFields = [
-  { key: 'couleur_primaire',   label: 'Couleur principale' },
+  { key: 'couleur_primaire', label: 'Couleur principale' },
   { key: 'couleur_secondaire', label: 'Couleur secondaire' },
-  { key: 'couleur_menu',       label: 'Couleur du menu' },
-  { key: 'couleur_pied',       label: 'Couleur du pied de page' },
+  { key: 'couleur_menu', label: 'Couleur du menu' },
+  { key: 'couleur_pied', label: 'Couleur du pied de page' },
 ]
 
 const fonts = ['Sora', 'DM Sans', 'Poppins', 'Inter', 'Nunito', 'Raleway', 'Montserrat', 'Lato']
 
 const btnStyles = [
-  { key: 'rounded', label: 'Arrondi',    radius: '8px' },
-  { key: 'pill',    label: 'Pilule',     radius: '999px' },
-  { key: 'square',  label: 'Carré',      radius: '2px' },
+  { key: 'rounded', label: 'Arrondi', radius: '8px' },
+  { key: 'pill', label: 'Pilule', radius: '999px' },
+  { key: 'square', label: 'Carré', radius: '2px' },
 ]
 
 const socialFields = [
@@ -511,48 +730,67 @@ async function loadSettings() {
     ministere.value = d.general
 
     Object.assign(general.value, {
-      nom:           d.general?.nom || '',
-      type:          d.general?.type || 'eglise',
+      nom: d.general?.nom || '',
+      type: d.general?.type || 'eglise',
       email_contact: d.general?.email_contact || '',
-      telephone:     d.general?.telephone || '',
-      adresse:       d.general?.adresse || '',
-      ville:         d.general?.ville || '',
-      pays:          d.general?.pays || '',
-      description:   d.general?.description || '',
+      telephone: d.general?.telephone || '',
+      adresse: d.general?.adresse || '',
+      ville: d.general?.ville || '',
+      pays: d.general?.pays || '',
+      description: d.general?.description || '',
     })
 
     if (d.theme) {
       Object.assign(theme.value, {
-        couleur_primaire:   d.theme.couleur_primaire   || '#1E3A8A',
+        couleur_primaire: d.theme.couleur_primaire || '#1E3A8A',
         couleur_secondaire: d.theme.couleur_secondaire || '#FFFFFF',
-        couleur_menu:       d.theme.couleur_menu       || '#1E3A8A',
-        couleur_pied:       d.theme.couleur_pied       || '#111827',
-        police_titre:       d.theme.police_titre       || 'Sora',
-        police_corps:       d.theme.police_corps       || 'DM Sans',
-        style_boutons:      d.theme.style_boutons      || 'rounded',
-        logo_preview:       d.theme.logo_url           || null,
+        couleur_menu: d.theme.couleur_menu || '#1E3A8A',
+        couleur_pied: d.theme.couleur_pied || '#111827',
+        police_titre: d.theme.police_titre || 'Sora',
+        police_corps: d.theme.police_corps || 'DM Sans',
+        style_boutons: d.theme.style_boutons || 'rounded',
+        logo_preview: d.theme.logo_url || null,
       })
     }
 
     if (d.seo) {
       Object.assign(seo.value, {
-        meta_titre:       d.seo.meta_titre       || '',
+        meta_titre: d.seo.meta_titre || '',
         meta_description: d.seo.meta_description || '',
-        meta_keywords:    d.seo.meta_keywords    || [],
+        meta_keywords: d.seo.meta_keywords || [],
         google_analytics: d.seo.google_analytics || '',
-        indexable:        d.seo.indexable ?? true,
+        indexable: d.seo.indexable ?? true,
       })
     }
 
     if (d.social) {
       Object.assign(social.value, {
-        facebook:  d.social.facebook  || '',
-        youtube:   d.social.youtube   || '',
-        whatsapp:  d.social.whatsapp  || '',
+        facebook: d.social.facebook || '',
+        youtube: d.social.youtube || '',
+        whatsapp: d.social.whatsapp || '',
         instagram: d.social.instagram || '',
-        twitter:   d.social.twitter   || '',
-        tiktok:    d.social.tiktok    || '',
-        telegram:  d.social.telegram  || '',
+        twitter: d.social.twitter || '',
+        tiktok: d.social.tiktok || '',
+        telegram: d.social.telegram || '',
+      })
+    }
+
+    if (d.content) {
+      Object.assign(content.value, {
+        slogan: d.content.slogan || '',
+        vision: d.content.vision || '',
+        mission: d.content.mission || '',
+        valeur: d.content.valeur || '',
+        annee_fondation: d.content.annee_fondation || '2009',
+        qui_sommes_nous: d.content.qui_sommes_nous || '',
+        live_youtube_id: d.content.live_youtube_id || '',
+        live_actif: d.content.live_actif === 1 ? true : false,
+        live_prochain: d.content.live_prochain || '',
+        orange_money_numero: d.content.orange_money_numero || '',
+        don_actif: d.content.don_actif === 1 ? true : false,
+        fondateur: d.content.fondateur || '',
+        fondateur_titre: d.content.fondateur_titre || '',
+        fondateur_photo_preview: d.content.fondateur_photo || null,
       })
     }
   } catch (e) {
@@ -580,13 +818,13 @@ async function saveTheme() {
     const params = auth.user?.ministere_id ? auth.user.ministere_id : 1
 
     formData.append('ministere_id', params)
-    formData.append('couleur_primaire',   theme.value.couleur_primaire)
+    formData.append('couleur_primaire', theme.value.couleur_primaire)
     formData.append('couleur_secondaire', theme.value.couleur_secondaire)
-    formData.append('couleur_menu',       theme.value.couleur_menu)
-    formData.append('couleur_pied',       theme.value.couleur_pied)
-    formData.append('police_titre',       theme.value.police_titre)
-    formData.append('police_corps',       theme.value.police_corps)
-    formData.append('style_boutons',      theme.value.style_boutons)
+    formData.append('couleur_menu', theme.value.couleur_menu)
+    formData.append('couleur_pied', theme.value.couleur_pied)
+    formData.append('police_titre', theme.value.police_titre)
+    formData.append('police_corps', theme.value.police_corps)
+    formData.append('style_boutons', theme.value.style_boutons)
 
     if (theme.value.logo_file) {
       formData.append('logo', theme.value.logo_file)
@@ -629,6 +867,70 @@ async function saveSocial() {
   }
 }
 
+// Dans saveContent, modifions la gestion des booléens
+async function saveContent(section) {
+  saving.value = section
+  try {
+    const params = { ministere_id: auth.user?.ministere_id || 1 }
+    const payload = { ...params }
+
+    if (section === 'textes') {
+      Object.assign(payload, {
+        slogan: content.value.slogan,
+        vision: content.value.vision,
+        mission: content.value.mission,
+        valeur: content.value.valeur,
+        annee_fondation: content.value.annee_fondation,
+        qui_sommes_nous: content.value.qui_sommes_nous,
+      })
+    } else if (section === 'live') {
+      // convertir boolean en '1' ou '0'
+      Object.assign(payload, {
+        live_youtube_id: content.value.live_youtube_id,
+        live_actif: content.value.live_actif ? 1 : 0,
+        live_prochain: content.value.live_prochain,
+      })
+    } else if (section === 'dons') {
+      //  convertir boolean en '1' ou '0'
+      Object.assign(payload, {
+        don_actif: content.value.don_actif ? 1 : 0,
+        orange_money_numero: content.value.orange_money_numero,
+      })
+    } else if (section === 'fondateur') {
+      if (content.value.fondateur_photo_file) {
+        const fd = new FormData()
+        fd.append('fichier', content.value.fondateur_photo_file)
+        fd.append('ministere_id', auth.user?.ministere_id || 1)
+        const res = await api.post('/ministry/media/upload', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        payload.fondateur_photo = res.data.data?.url
+      }
+      Object.assign(payload, {
+        fondateur: content.value.fondateur,
+        fondateur_titre: content.value.fondateur_titre,
+      })
+    }
+
+    await api.put('/ministry/settings/content', payload)
+    showToast('Contenu enregistré !', 'success')
+  } catch (e) {
+    console.error('Erreur:', e)
+    showToast('Erreur lors de la sauvegarde.', 'error')
+  } finally {
+    saving.value = null
+  }
+}
+
+function handleFondateurPhoto(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  content.value.fondateur_photo_file = file
+  const reader = new FileReader()
+  reader.onload = ev => { content.value.fondateur_photo_preview = ev.target.result }
+  reader.readAsDataURL(file)
+}
+
 function showToast(message, type = 'success') {
   toast.value = { show: true, type, message }
   setTimeout(() => { toast.value.show = false }, 3000)
@@ -638,231 +940,793 @@ onMounted(() => loadSettings())
 </script>
 
 <style scoped>
-.settings-tabs {
-  display: flex; gap: 4px; margin-bottom: 20px;
-  background: #fff; border: 1px solid #E2E8F0;
-  border-radius: 10px; padding: 4px;
-  width: fit-content;
-}
-.settings-tab {
-  display: flex; align-items: center; gap: 7px;
-  padding: 8px 16px; border-radius: 7px; border: none;
-  background: transparent; font-size: 13px;
-  color: #64748B; cursor: pointer; transition: all .12s;
-}
-.settings-tab:hover { background: #F8FAFC; color: #374151; }
-.settings-tab.active {
-  background: #1E3A8A; color: #fff; font-weight: 500;
+/* Ajout du style pour l'aperçu des valeurs */
+.value-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
 }
 
-.tab-content { animation: fadeIn .2s ease-out; }
+.value-preview svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.value-preview-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+.yt-ok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #16A34A;
+  margin-top: 4px;
+}
+
+/* Onglet Contenu */
+.youtube-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.youtube-input-wrap .form-input {
+  flex: 1;
+}
+
+.youtube-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  padding: 12px;
+  background: #F8FAFC;
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+}
+
+.yt-thumb {
+  width: 120px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.yt-url {
+  font-size: 12px;
+  color: #3B82F6;
+  font-family: monospace;
+}
+
+.yt-ok {
+  font-size: 12px;
+  color: #16A34A;
+  margin-top: 4px;
+}
+
+.phone-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone-flag {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.phone-input-wrap .form-input {
+  flex: 1;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-top: 4px;
+}
+
+.photo-drop {
+  border: 2px dashed #E2E8F0;
+  border-radius: 10px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .15s;
+  overflow: hidden;
+}
+
+.photo-drop:hover {
+  border-color: #3B82F6;
+  background: #EFF6FF;
+}
+
+.photo-drop.has-photo {
+  border-style: solid;
+}
+
+.photo-preview {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #CBD5E1;
+  font-size: 11px;
+  padding: 16px;
+}
+
+.live-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #FFF3E0;
+  border-radius: 10px;
+  border: 1px solid #FF5722;
+}
+
+.live-preview-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #FF5722;
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 87, 34, .4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 87, 34, 0);
+  }
+}
+
+.live-preview-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #FF5722;
+  letter-spacing: .1em;
+}
+
+.live-preview-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-dark);
+  margin-top: 2px;
+}
+
+.settings-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #64748B;
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.settings-tab:hover {
+  background: #F8FAFC;
+  color: #374151;
+}
+
+.settings-tab.active {
+  background: #1E3A8A;
+  color: #fff;
+  font-weight: 500;
+}
+
+.tab-content {
+  animation: fadeIn .2s ease-out;
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-layout {
-  display: grid; grid-template-columns: 1fr 300px;
-  gap: 16px; align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+  align-items: flex-start;
 }
-.form-main    { display: flex; flex-direction: column; gap: 16px; }
-.form-sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+.form-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .card {
-  background: #fff; border: 1px solid #E2E8F0;
-  border-radius: 12px; padding: 20px;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 20px;
 }
+
 .card-title {
-  font-size: 14px; font-weight: 600; color: #0F172A;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F172A;
   margin-bottom: 16px;
 }
+
 .card-footer {
-  padding-top: 16px; margin-top: 16px;
+  padding-top: 16px;
+  margin-top: 16px;
   border-top: 1px solid #F1F5F9;
-  display: flex; justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .form-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group.span-2 { grid-column: span 2; }
-.form-label { font-size: 12px; font-weight: 500; color: #374151; }
-.optional   { color: #94A3B8; font-weight: 400; }
-.form-input {
-  width: 100%; padding: 9px 12px;
-  border: 1px solid #E2E8F0; border-radius: 8px;
-  font-size: 13px; color: #0F172A; background: #fff;
-  outline: none; transition: border-color .15s; font-family: inherit;
-}
-.form-input:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,.08); }
-.form-input::placeholder { color: #CBD5E1; }
-.char-count { font-size: 11px; color: #94A3B8; text-align: right; }
-.char-count.warn { color: #DC2626; }
 
-.subdomain-display { padding: 10px 14px; background: #F8FAFC; border-radius: 8px; }
-.subdomain-value { font-size: 14px; font-weight: 600; color: #1E3A8A; font-family: monospace; }
-.subdomain-hint  { font-size: 11px; color: #94A3B8; margin-top: 4px; }
-.status-info { display: flex; flex-direction: column; gap: 8px; }
-.badge { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; width: fit-content; }
-.badge-green { background: #DCFCE7; color: #166534; }
-.badge-gray  { background: #F1F5F9; color: #475569; }
-.status-date { font-size: 12px; color: #94A3B8; }
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.span-2 {
+  grid-column: span 2;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.optional {
+  color: #94A3B8;
+  font-weight: 400;
+}
+
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0F172A;
+  background: #fff;
+  outline: none;
+  transition: border-color .15s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, .08);
+}
+
+.form-input::placeholder {
+  color: #CBD5E1;
+}
+
+.char-count {
+  font-size: 11px;
+  color: #94A3B8;
+  text-align: right;
+}
+
+.char-count.warn {
+  color: #DC2626;
+}
+
+.subdomain-display {
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border-radius: 8px;
+}
+
+.subdomain-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E3A8A;
+  font-family: monospace;
+}
+
+.subdomain-hint {
+  font-size: 11px;
+  color: #94A3B8;
+  margin-top: 4px;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.badge-green {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.badge-gray {
+  background: #F1F5F9;
+  color: #475569;
+}
+
+.status-date {
+  font-size: 12px;
+  color: #94A3B8;
+}
 
 /* Couleurs */
-.colors-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.color-item  { display: flex; flex-direction: column; gap: 6px; }
-.color-input-wrap { display: flex; align-items: center; gap: 8px; }
+.colors-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.color-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.color-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .color-picker {
-  width: 36px; height: 36px; border: 1px solid #E2E8F0;
-  border-radius: 8px; cursor: pointer; padding: 2px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px;
   background: #fff;
 }
-.color-hex { flex: 1; font-family: monospace; }
+
+.color-hex {
+  flex: 1;
+  font-family: monospace;
+}
 
 /* Typographie */
-.btn-styles { display: flex; gap: 10px; flex-wrap: wrap; }
-.btn-style-preview {
-  padding: 8px 20px; border: 2px solid #E2E8F0;
-  background: #1E3A8A; color: #fff;
-  font-size: 13px; cursor: pointer; transition: all .12s;
+.btn-styles {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.btn-style-preview.active { border-color: #1E3A8A; box-shadow: 0 0 0 3px rgba(30,58,138,.2); }
+
+.btn-style-preview {
+  padding: 8px 20px;
+  border: 2px solid #E2E8F0;
+  background: #1E3A8A;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .12s;
+}
+
+.btn-style-preview.active {
+  border-color: #1E3A8A;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, .2);
+}
 
 /* Logo */
 .logo-drop {
-  border: 2px dashed #E2E8F0; border-radius: 10px;
-  min-height: 80px; display: flex;
-  align-items: center; justify-content: center;
-  cursor: pointer; transition: all .15s; overflow: hidden;
+  border: 2px dashed #E2E8F0;
+  border-radius: 10px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .15s;
+  overflow: hidden;
 }
-.logo-drop:hover { border-color: #3B82F6; background: #EFF6FF; }
-.logo-drop.has-logo { border-style: solid; }
-.logo-preview { max-height: 80px; object-fit: contain; padding: 8px; }
+
+.logo-drop:hover {
+  border-color: #3B82F6;
+  background: #EFF6FF;
+}
+
+.logo-drop.has-logo {
+  border-style: solid;
+}
+
+.logo-preview {
+  max-height: 80px;
+  object-fit: contain;
+  padding: 8px;
+}
+
 .logo-placeholder {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 6px;
-  color: #CBD5E1; font-size: 11px; padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #CBD5E1;
+  font-size: 11px;
+  padding: 16px;
 }
+
 .remove-btn {
-  width: 100%; margin-top: 8px; padding: 6px;
-  border: 1px solid #FECACA; border-radius: 6px;
-  background: #FEF2F2; color: #DC2626;
-  font-size: 12px; cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px;
+  border: 1px solid #FECACA;
+  border-radius: 6px;
+  background: #FEF2F2;
+  color: #DC2626;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 /* Aperçu thème */
-.theme-preview { border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden; }
+.theme-preview {
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .preview-header {
-  padding: 8px 12px; display: flex;
-  align-items: center; justify-content: space-between;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.preview-nav { display: flex; gap: 10px; }
-.preview-nav span { color: rgba(255,255,255,.7); font-size: 9px; }
-.preview-body { padding: 12px; background: #F8FAFC; }
+
+.preview-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.preview-nav span {
+  color: rgba(255, 255, 255, .7);
+  font-size: 9px;
+}
+
+.preview-body {
+  padding: 12px;
+  background: #F8FAFC;
+}
+
 .preview-hero {
-  padding: 16px; border-radius: 8px;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 10px; text-align: center;
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
 }
-.preview-title { font-size: 14px; font-weight: 700; }
+
+.preview-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .preview-btn {
-  color: #fff; border: none; padding: 6px 16px;
-  font-size: 11px; cursor: pointer;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  font-size: 11px;
+  cursor: pointer;
 }
 
 /* SEO */
 .google-preview {
-  background: #F8FAFC; border-radius: 8px;
-  padding: 14px; border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  border-radius: 8px;
+  padding: 14px;
+  border: 1px solid #E2E8F0;
 }
-.google-url   { font-size: 12px; color: #1a73e8; margin-bottom: 2px; }
-.google-title { font-size: 16px; color: #1a0dab; margin-bottom: 4px; font-weight: 400; }
-.google-desc  { font-size: 13px; color: #545454; line-height: 1.5; }
-.seo-tips     { display: flex; flex-direction: column; gap: 8px; }
-.seo-tip {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; color: #374151;
-}
-.tip-dot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-.seo-tip.ok    .tip-dot { background: #16A34A; }
-.seo-tip.warn  .tip-dot { background: #D97706; }
-.seo-tip.error .tip-dot { background: #DC2626; }
 
-/* Social */
-.social-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
-.social-item { display: flex; align-items: center; gap: 12px; }
-.social-icon {
-  width: 38px; height: 38px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
+.google-url {
+  font-size: 12px;
+  color: #1a73e8;
+  margin-bottom: 2px;
+}
+
+.google-title {
+  font-size: 16px;
+  color: #1a0dab;
+  margin-bottom: 4px;
+  font-weight: 400;
+}
+
+.google-desc {
+  font-size: 13px;
+  color: #545454;
+  line-height: 1.5;
+}
+
+.seo-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seo-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+
+.tip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
-.social-field { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+.seo-tip.ok .tip-dot {
+  background: #16A34A;
+}
+
+.seo-tip.warn .tip-dot {
+  background: #D97706;
+}
+
+.seo-tip.error .tip-dot {
+  background: #DC2626;
+}
+
+/* Social */
+.social-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.social-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.social-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.social-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
 /* Tags */
-.tags-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; min-height: 24px; }
-.tag-item {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: #EEF2FF; color: #4338CA;
-  font-size: 12px; padding: 3px 8px 3px 10px; border-radius: 20px;
+.tags-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+  min-height: 24px;
 }
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #EEF2FF;
+  color: #4338CA;
+  font-size: 12px;
+  padding: 3px 8px 3px 10px;
+  border-radius: 20px;
+}
+
 .tag-remove {
-  background: none; border: none; color: #818CF8;
-  cursor: pointer; font-size: 14px; line-height: 1; padding: 0;
+  background: none;
+  border: none;
+  color: #818CF8;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
 }
 
 /* Toggle */
 .toggle-row {
-  display: flex; align-items: center;
-  justify-content: space-between; font-size: 13px; margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: 14px;
 }
-.toggle-label { color: #374151; }
-.toggle { position: relative; width: 36px; height: 20px; cursor: pointer; }
-.toggle input { display: none; }
+
+.toggle-label {
+  color: #374151;
+}
+
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.toggle input {
+  display: none;
+}
+
 .toggle-slider {
-  position: absolute; inset: 0;
-  background: #E2E8F0; border-radius: 10px; transition: background .2s;
+  position: absolute;
+  inset: 0;
+  background: #E2E8F0;
+  border-radius: 10px;
+  transition: background .2s;
 }
+
 .toggle-slider::after {
-  content: ''; position: absolute;
-  top: 2px; left: 2px; width: 16px; height: 16px;
-  background: #fff; border-radius: 50%; transition: transform .2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
 }
-.toggle input:checked + .toggle-slider { background: #1E3A8A; }
-.toggle input:checked + .toggle-slider::after { transform: translateX(16px); }
+
+.toggle input:checked+.toggle-slider {
+  background: #1E3A8A;
+}
+
+.toggle input:checked+.toggle-slider::after {
+  transform: translateX(16px);
+}
 
 /* Buttons */
 .btn-primary {
-  display: flex; align-items: center; gap: 6px;
-  background: #1E3A8A; color: #fff; border: none;
-  padding: 9px 20px; border-radius: 8px;
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  min-width: 140px; justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1E3A8A;
+  color: #fff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+  justify-content: center;
   transition: background .12s;
 }
-.btn-primary:hover:not(:disabled) { background: #1e40af; }
-.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+
+.btn-primary:hover:not(:disabled) {
+  background: #1e40af;
+}
+
+.btn-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
 
 /* Toast */
 .toast {
-  position: fixed; bottom: 24px; right: 24px;
-  padding: 12px 18px; border-radius: 10px;
-  font-size: 13px; font-weight: 500; z-index: 200;
-  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
 }
-.toast.success { background: #0F172A; color: #fff; }
-.toast.error   { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
-.toast-enter-active, .toast-leave-active { transition: all .3s; }
-.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(10px); }
+
+.toast.success {
+  background: #0F172A;
+  color: #fff;
+}
+
+.toast.error {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all .3s;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 
 .spinner-sm {
-  width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,.3);
-  border-top-color: #fff; border-radius: 50%;
-  animation: spin .6s linear infinite; display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, .3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  display: inline-block;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>

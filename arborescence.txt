@@ -1,0 +1,51 @@
+.
+├── arborescence.txt
+├── index.html
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── public
+│   ├── favicon.svg
+│   └── icons.svg
+├── README.md
+├── src
+│   ├── App.vue
+│   ├── assets
+│   │   ├── hero.png
+│   │   ├── logos
+│   │   ├── vite.svg
+│   │   └── vue.svg
+│   ├── components
+│   │   ├── forms
+│   │   ├── HelloWorld.vue
+│   │   ├── layout
+│   │   └── ui
+│   ├── composables
+│   │   └── useNotifications.js
+│   ├── main.js
+│   ├── router
+│   │   └── index.js
+│   ├── services
+│   │   └── api.js
+│   ├── stores
+│   │   └── auth.js
+│   ├── style.css
+│   ├── utils
+│   │   └── url.js
+│   └── views
+│       ├── articles
+│       ├── auth
+│       ├── dashboard
+│       ├── events
+│       ├── logs
+│       ├── media
+│       ├── messages
+│       ├── notifications
+│       ├── pages
+│       ├── profile
+│       ├── settings
+│       └── users
+├── tailwind.config.js
+└── vite.config.js
+
+27 directories, 22 files

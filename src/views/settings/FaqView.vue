@@ -25,7 +25,10 @@
 
     <!-- Empty -->
     <div v-else-if="faqs.length === 0" class="empty-state">
-      <div class="empty-illus">❓</div>
+      <svg width="48" height="48" fill="none" stroke="#94A3B8" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
       <div class="empty-title">Aucune FAQ</div>
       <div class="empty-sub">Ajoutez des questions fréquentes pour aider vos visiteurs</div>
       <button class="btn-primary" @click="openModal()">Ajouter la première FAQ</button>
@@ -231,7 +234,7 @@ async function saveFaq() {
     }
     modal.value.show = false
   } catch (e) {
-    showToast('Erreur.', 'error')
+    showToast('Erreur lors de la sauvegarde.', 'error')
   } finally {
     saving.value = false
   }
@@ -241,7 +244,11 @@ async function toggleFaq(faq) {
   try {
     await api.patch(`/ministry/faq/${faq.id}/toggle`)
     faq.actif = !faq.actif
-  } catch (e) { console.error(e) }
+    showToast(faq.actif ? 'FAQ activée' : 'FAQ désactivée', 'success')
+  } catch (e) { 
+    console.error(e)
+    showToast('Erreur lors du changement de statut', 'error')
+  }
 }
 
 function confirmDelete(faq) {
@@ -256,7 +263,7 @@ async function deleteFaq() {
     deleteModal.value.show = false
     showToast('FAQ supprimée.', 'success')
   } catch (e) {
-    showToast('Erreur.', 'error')
+    showToast('Erreur lors de la suppression.', 'error')
   } finally {
     deleteModal.value.loading = false
   }
@@ -274,6 +281,8 @@ onMounted(() => loadFaqs())
 .toolbar {
   display: flex; align-items: center;
   justify-content: space-between; margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .page-desc { font-size: 13px; color: #64748B; }
 .btn-primary {
@@ -297,7 +306,7 @@ onMounted(() => loadFaqs())
 }
 .faq-item:last-child { border-bottom: none; }
 .faq-item:hover { background: #FAFBFC; }
-.faq-item.inactive { opacity: .5; }
+.faq-item.inactive { opacity: .6; }
 
 .faq-order {
   width: 24px; height: 24px; border-radius: 6px;
@@ -320,17 +329,29 @@ onMounted(() => loadFaqs())
   padding: 2px 8px; border-radius: 20px;
   background: #EEF2FF; color: #4338CA; font-size: 11px;
 }
-.faq-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.faq-actions { 
+  display: flex; 
+  gap: 4px; 
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+.faq-item:hover .faq-actions {
+  opacity: 1;
+}
 .action-btn {
   width: 28px; height: 28px; border-radius: 6px;
   border: none; display: flex; align-items: center;
-  justify-content: center; cursor: pointer; transition: all .1s;
+  justify-content: center; cursor: pointer; transition: all .15s;
+}
+.action-btn:hover { 
+  transform: scale(1.05);
+  filter: brightness(.95);
 }
 .active-btn  { background: #DCFCE7; color: #16A34A; }
 .inactive-btn{ background: #F1F5F9; color: #94A3B8; }
 .edit-btn    { background: #EEF2FF; color: #4338CA; }
 .delete-btn  { background: #FEF2F2; color: #DC2626; }
-.action-btn:hover { filter: brightness(.9); }
 
 /* Skeleton */
 .faq-skeleton {
@@ -354,16 +375,17 @@ onMounted(() => loadFaqs())
 .empty-state {
   background: #fff; border: 1px solid #E2E8F0; border-radius: 12px;
   display: flex; flex-direction: column;
-  align-items: center; gap: 8px; padding: 60px; text-align: center;
+  align-items: center; gap: 12px; padding: 60px; text-align: center;
 }
-.empty-illus { font-size: 48px; }
 .empty-title { font-size: 18px; font-weight: 600; color: #0F172A; }
 .empty-sub   { font-size: 14px; color: #94A3B8; margin-bottom: 8px; }
 
 /* Modal form */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.5);
-  display: flex; align-items: center; justify-content: center; z-index: 100;
+  display: flex; align-items: center; justify-content: center; 
+  z-index: 100;
+  backdrop-filter: blur(4px);
 }
 .modal-form {
   background: #fff; border-radius: 16px;
@@ -383,7 +405,14 @@ onMounted(() => loadFaqs())
   cursor: pointer; transition: background .1s;
 }
 .modal-close:hover { background: #E2E8F0; }
-.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.modal-body { 
+  padding: 20px; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 14px; 
+  max-height: 70vh;
+  overflow-y: auto;
+}
 .modal-footer {
   display: flex; justify-content: flex-end; gap: 8px;
   padding: 14px 20px; border-top: 1px solid #F1F5F9;
@@ -401,6 +430,7 @@ onMounted(() => loadFaqs())
   outline: none; transition: border-color .15s; font-family: inherit;
 }
 .form-input:focus { border-color: #3B82F6; }
+textarea.form-input { resize: vertical; min-height: 80px; }
 .toggle-row {
   display: flex; align-items: center;
   justify-content: space-between; font-size: 13px;
@@ -441,14 +471,18 @@ onMounted(() => loadFaqs())
   padding: 8px 16px; border: 1px solid #E2E8F0;
   border-radius: 8px; background: #fff;
   font-size: 13px; color: #374151; cursor: pointer;
+  transition: background .12s;
 }
+.btn-secondary:hover { background: #F8FAFC; }
 .btn-danger {
   display: flex; align-items: center; justify-content: center;
   min-width: 90px; padding: 8px 16px; border: none;
   border-radius: 8px; background: #DC2626; color: #fff;
   font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .12s;
 }
-.btn-danger:disabled { opacity: .7; }
+.btn-danger:hover:not(:disabled) { background: #B91C1C; }
+.btn-danger:disabled { opacity: .7; cursor: not-allowed; }
 
 .toast {
   position: fixed; bottom: 24px; right: 24px;
@@ -460,6 +494,7 @@ onMounted(() => loadFaqs())
 .toast.error   { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
 .toast-enter-active, .toast-leave-active { transition: all .3s; }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(10px); }
+
 .spinner-sm {
   width: 16px; height: 16px;
   border: 2px solid rgba(255,255,255,.3);

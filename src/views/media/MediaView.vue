@@ -1,16 +1,45 @@
 <template>
   <div class="fade-in">
 
+    <!-- Stats rapides -->
+    <div class="stats-row">
+      <div class="stat-pill">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <div>
+          <div class="stat-pill-n">{{ counts.all }}</div>
+          <div class="stat-pill-l">Total</div>
+        </div>
+      </div>
+      <div class="stat-pill green">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        <div>
+          <div class="stat-pill-n">{{ counts.visible }}</div>
+          <div class="stat-pill-l">Visibles</div>
+        </div>
+      </div>
+      <div class="stat-pill gray">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+        </svg>
+        <div>
+          <div class="stat-pill-n">{{ counts.hidden }}</div>
+          <div class="stat-pill-l">Masqués</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Toolbar -->
-    <div class="media-toolbar">
+    <div class="toolbar">
       <div class="toolbar-left">
-        <button
-          v-for="tab in typeTabs"
-          :key="tab.key"
-          class="tab-btn"
-          :class="{ active: activeType === tab.key }"
-          @click="activeType = tab.key; loadMedia()"
-        >
+        <button v-for="tab in typeTabs" :key="tab.key" class="tab-btn" :class="{ active: activeType === tab.key }"
+          @click="activeType = tab.key; loadMedia()">
           <span v-html="tab.icon"></span>
           {{ tab.label }}
           <span class="tab-count">{{ tab.count }}</span>
@@ -18,11 +47,17 @@
       </div>
       <div class="toolbar-right">
         <div class="search-wrap">
-          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input v-model="search" class="search-input" placeholder="Rechercher..." @input="debouncedSearch" />
         </div>
+        <select v-model="visibilityFilter" class="filter-select" @change="loadMedia()">
+          <option value="">Tous</option>
+          <option value="visible">Visibles</option>
+          <option value="hidden">Masqués</option>
+        </select>
         <div class="view-toggle">
           <button class="view-btn" :class="{ active: viewMode === 'grid' }" @click="viewMode = 'grid'">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -36,35 +71,26 @@
           </button>
         </div>
         <label class="btn-primary upload-label">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Uploader
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
-            style="display:none"
-            @change="handleUpload"
-          />
+          Uploader (max 50 Mo)
+          <input ref="fileInput" type="file" multiple accept="image/*,video/*" style="display:none"
+            @change="handleUpload" />
         </label>
       </div>
     </div>
 
     <!-- Zone de drop global -->
-    <div
-      class="drop-zone"
-      :class="{ active: isDragging }"
-      @dragover.prevent="isDragging = true"
-      @dragleave.prevent="isDragging = false"
-      @drop.prevent="handleDrop"
-    >
+    <div class="drop-zone" :class="{ active: isDragging }" @dragover.prevent="isDragging = true"
+      @dragleave.prevent="isDragging = false" @drop.prevent="handleDrop">
       <div v-if="isDragging" class="drop-overlay">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
         </svg>
-        <span>Déposer les fichiers ici</span>
+        <span>Déposer les fichiers ici (max 50 Mo)</span>
       </div>
 
       <!-- Progress upload -->
@@ -86,8 +112,9 @@
         <div class="selection-actions">
           <button class="sel-btn" @click="selected = []">Désélectionner</button>
           <button class="sel-btn danger" @click="confirmBulkDelete">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
             Supprimer ({{ selected.length }})
           </button>
@@ -101,36 +128,32 @@
 
       <!-- Empty -->
       <div v-else-if="medias.length === 0" class="empty-state">
-        <div class="empty-illustration">
-          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <h3 class="empty-title">Aucun média</h3>
-        <p class="empty-description">Glissez des fichiers ici ou cliquez sur Uploader</p>
+        <svg width="48" height="48" fill="none" stroke="#94A3B8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <div class="empty-title">Aucun média</div>
+        <div class="empty-sub">Glissez des fichiers ici ou cliquez sur Uploader (max 50 Mo)</div>
         <label class="btn-primary upload-label" style="margin-top:8px">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Uploader des fichiers
+          Uploader des fichiers (max 50 Mo)
           <input type="file" multiple style="display:none" @change="handleUpload" />
         </label>
       </div>
 
       <!-- Grid view -->
       <div v-else-if="viewMode === 'grid'" class="media-grid">
-        <div
-          v-for="media in medias"
-          :key="media.id"
-          class="media-item"
-          :class="{ selected: selected.includes(media.id) }"
-          @click="toggleSelect(media)"
-          @dblclick="openPreview(media)"
-        >
+        <div v-for="media in medias" :key="media.id" class="media-item"
+          :class="{ selected: selected.includes(media.id), inactive: !media.visible }" @click="toggleSelect(media)"
+          @dblclick="openPreview(media)">
           <!-- Checkbox -->
           <div class="media-checkbox" @click.stop="toggleSelect(media)">
             <div class="checkbox" :class="{ checked: selected.includes(media.id) }">
-              <svg v-if="selected.includes(media.id)" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+              <svg v-if="selected.includes(media.id)" width="10" height="10" viewBox="0 0 24 24" fill="none"
+                stroke="white" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -138,13 +161,8 @@
 
           <!-- Aperçu -->
           <div class="media-thumb">
-            <img 
-              v-if="media.type === 'image'" 
-              :src="getFullUrl(media.url)" 
-              :alt="media.nom_original" 
-              loading="lazy"
-              @error="handleImageError"
-            />
+            <img v-if="media.type === 'image'" :src="getFullUrl(media.url)" :alt="media.nom_original" loading="lazy"
+              @error="handleImageError" />
             <div v-else class="media-icon-wrap" :style="{ background: typeConfig[media.type]?.bg }">
               <span v-html="typeConfig[media.type]?.icon" :style="{ color: typeConfig[media.type]?.color }"></span>
             </div>
@@ -154,24 +172,39 @@
           <div class="media-info">
             <div class="media-name" :title="media.nom_original">{{ media.nom_original }}</div>
             <div class="media-size">{{ formatSize(media.taille) }}</div>
+            <div class="media-visibility" :class="{ visible: media.visible, hidden: !media.visible }">
+              {{ media.visible ? '✓ Visible' : '👁️ Masqué' }}
+            </div>
           </div>
 
           <!-- Actions hover -->
           <div class="media-actions">
+            <button class="media-action" @click.stop="toggleVisibility(media)"
+              :title="media.visible ? 'Masquer' : 'Rendre visible'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path v-if="media.visible" stroke-linecap="round" stroke-linejoin="round"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                <path v-else stroke-linecap="round" stroke-linejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
             <button class="media-action" @click.stop="openPreview(media)" title="Aperçu">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
             </button>
             <button class="media-action" @click.stop="copyUrl(media)" title="Copier l'URL">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
             </button>
             <button class="media-action danger" @click.stop="confirmDelete(media)" title="Supprimer">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
           </div>
@@ -183,20 +216,18 @@
         <div class="table-head">
           <div class="th" style="width:40px"></div>
           <div class="th" style="flex:1">Fichier</div>
-          <div class="th" style="width:100px">Type</div>
+          <div class="th" style="width:80px">Type</div>
+          <div class="th" style="width:80px">Visibilité</div>
           <div class="th" style="width:90px">Taille</div>
           <div class="th" style="width:120px">Date</div>
-          <div class="th" style="width:80px">Actions</div>
+          <div class="th" style="width:100px">Actions</div>
         </div>
-        <div
-          v-for="media in medias"
-          :key="media.id"
-          class="table-row"
-          :class="{ selected: selected.includes(media.id) }"
-        >
+        <div v-for="media in medias" :key="media.id" class="table-row"
+          :class="{ selected: selected.includes(media.id), inactive: !media.visible }">
           <div class="td" style="width:40px">
             <div class="checkbox" :class="{ checked: selected.includes(media.id) }" @click="toggleSelect(media)">
-              <svg v-if="selected.includes(media.id)" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+              <svg v-if="selected.includes(media.id)" width="10" height="10" viewBox="0 0 24 24" fill="none"
+                stroke="white" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -204,19 +235,21 @@
           <div class="td" style="flex:1">
             <div class="list-file">
               <div class="list-thumb">
-                <img 
-                  v-if="media.type === 'image'" 
-                  :src="getFullUrl(media.url)" 
-                  :alt="media.nom_original"
-                  @error="handleImageError"
-                />
-                <span v-else v-html="typeConfig[media.type]?.icon" :style="{ color: typeConfig[media.type]?.color }"></span>
+                <img v-if="media.type === 'image'" :src="getFullUrl(media.url)" :alt="media.nom_original"
+                  @error="handleImageError" />
+                <span v-else v-html="typeConfig[media.type]?.icon"
+                  :style="{ color: typeConfig[media.type]?.color }"></span>
               </div>
               <span class="list-name" :title="media.nom_original">{{ media.nom_original }}</span>
             </div>
           </div>
-          <div class="td" style="width:100px">
+          <div class="td" style="width:80px">
             <span class="badge" :class="typeConfig[media.type]?.badge">{{ media.type }}</span>
+          </div>
+          <div class="td" style="width:80px">
+            <button class="visibility-toggle" :class="{ visible: media.visible }" @click="toggleVisibility(media)">
+              {{ media.visible ? 'Visible' : 'Masqué' }}
+            </button>
           </div>
           <div class="td" style="width:90px">
             <span class="list-size">{{ formatSize(media.taille) }}</span>
@@ -224,15 +257,17 @@
           <div class="td" style="width:120px">
             <span class="list-date">{{ formatDate(media.created_at) }}</span>
           </div>
-          <div class="td actions-td" style="width:80px" @click.stop>
+          <div class="td actions-td" style="width:100px" @click.stop>
             <button class="action-btn" @click="copyUrl(media)" title="Copier l'URL">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
             </button>
             <button class="action-btn danger" @click="confirmDelete(media)" title="Supprimer">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
           </div>
@@ -244,48 +279,73 @@
     <!-- Pagination -->
     <div v-if="pagination.lastPage > 1" class="pagination">
       <button class="page-btn" :disabled="pagination.currentPage === 1" @click="changePage(pagination.currentPage - 1)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
         Précédent
       </button>
-      <div class="page-info">
-        Page {{ pagination.currentPage }} / {{ pagination.lastPage }}
-        <span class="page-total">({{ pagination.total }} fichiers)</span>
-      </div>
-      <button class="page-btn" :disabled="pagination.currentPage === pagination.lastPage" @click="changePage(pagination.currentPage + 1)">
+      <span class="page-info">{{ pagination.currentPage }} / {{ pagination.lastPage }}</span>
+      <button class="page-btn" :disabled="pagination.currentPage === pagination.lastPage"
+        @click="changePage(pagination.currentPage + 1)">
         Suivant
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
     </div>
 
     <!-- Modal preview -->
     <Teleport to="body">
-      <div v-if="preview.show" class="preview-overlay" @click.self="preview.show = false">
-        <div class="preview-modal">
-          <div class="preview-header">
-            <div class="preview-title">{{ preview.media?.nom_original }}</div>
-            <button class="preview-close" @click="preview.show = false">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      <div v-if="preview.show" class="modal-overlay" @click.self="preview.show = false">
+        <div class="modal-preview">
+          <div class="modal-header">
+            <div class="modal-title">{{ preview.media?.nom_original }}</div>
+            <button class="modal-close" @click="preview.show = false">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
           <div class="preview-body">
-            <img 
-              v-if="preview.media?.type === 'image'"
-              :src="getFullUrl(preview.media?.url)"
-              class="preview-image"
-              :alt="preview.media?.nom_original"
-            />
+            <img v-if="preview.media?.type === 'image'" :src="getFullUrl(preview.media?.url)" class="preview-image"
+              :alt="preview.media?.nom_original" />
+            <!-- Vidéo -->
+            <video v-else-if="preview.media?.type === 'video'" controls class="preview-video">
+              <source :src="getFullUrl(preview.media?.url)" :type="preview.media?.mime_type" />
+              Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+
+            <!-- Audio -->
+            <audio v-else-if="preview.media?.type === 'audio'" controls class="preview-audio">
+              <source :src="getFullUrl(preview.media?.url)" :type="preview.media?.mime_type" />
+              Votre navigateur ne supporte pas la lecture audio.
+            </audio>
+
+            <!-- Document / Autre -->
             <div v-else class="preview-file-icon">
               <span v-html="typeConfig[preview.media?.type]?.icon"></span>
               <div class="preview-file-name">{{ preview.media?.nom_original }}</div>
+              <div class="preview-visibility-info">
+                {{ preview.media?.visible ? 'Visible sur le site' : 'Masqué sur le site' }}
+              </div>
+              <a :href="getFullUrl(preview.media?.url)" target="_blank" class="btn-primary-sm"
+                style="margin-top: 16px;">
+                Télécharger
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </a>
             </div>
+            <!-- <div v-else class="preview-file-icon">
+              <span v-html="typeConfig[preview.media?.type]?.icon"></span>
+              <div class="preview-file-name">{{ preview.media?.nom_original }}</div>
+              <div class="preview-visibility-info">
+                {{ preview.media?.visible ? 'Visible sur le site' : 'Masqué sur le site' }}
+              </div>
+            </div> -->
           </div>
-          <div class="preview-footer">
+          <div class="modal-footer">
             <div class="preview-meta">
               <span>{{ formatSize(preview.media?.taille) }}</span>
               <span>·</span>
@@ -293,10 +353,14 @@
             </div>
             <div class="preview-footer-actions">
               <button class="btn-secondary" @click="copyUrl(preview.media)">Copier l'URL</button>
+              <button class="btn-secondary" @click="toggleVisibility(preview.media)">
+                {{ preview.media?.visible ? 'Masquer' : 'Rendre visible' }}
+              </button>
               <a :href="getFullUrl(preview.media?.url)" target="_blank" class="btn-primary-sm">
                 Ouvrir
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
               </a>
             </div>
@@ -308,10 +372,11 @@
     <!-- Modal suppression -->
     <Teleport to="body">
       <div v-if="deleteModal.show" class="modal-overlay" @click.self="deleteModal.show = false">
-        <div class="modal">
+        <div class="modal-confirm">
           <div class="modal-icon danger">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
           </div>
           <h3 class="modal-title">
@@ -332,9 +397,10 @@
     <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast.show" class="toast" :class="toast.type">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path v-if="toast.type === 'success'" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-          <path v-else stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path v-if="toast.type === 'success'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 13l4 4L19 7" />
+          <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
         {{ toast.message }}
       </div>
@@ -350,32 +416,28 @@ import api from '@/services/api'
 
 const auth = useAuthStore()
 
-
-const medias     = ref([])
-const loading    = ref(true)
-const search     = ref('')
+const medias = ref([])
+const loading = ref(true)
+const search = ref('')
 const activeType = ref('')
-const viewMode   = ref('grid')
-const selected   = ref([])
+const visibilityFilter = ref('')
+const viewMode = ref('grid')
+const selected = ref([])
 const isDragging = ref(false)
-const uploading  = ref([])
+const uploading = ref([])
 const pagination = ref({ currentPage: 1, lastPage: 1, total: 0 })
-const counts     = ref({ all: 0, image: 0, video: 0, audio: 0, document: 0 })
-const preview    = ref({ show: false, media: null })
+const counts = ref({ all: 0, visible: 0, hidden: 0, image: 0, video: 0, audio: 0, document: 0 })
+const preview = ref({ show: false, media: null })
 const deleteModal = ref({ show: false, media: null, bulk: false, loading: false })
-const toast      = ref({ show: false, type: 'success', message: '' })
-
-// Cette ligne doit être présente et correcte
-const BASE_URL = import.meta.env.VITE_STORAGE_URL || 'http://127.0.0.1:8000'
+const toast = ref({ show: false, type: 'success', message: '' })
 
 function getFullUrl(path) {
   if (!path) return ''
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  // path commence par /storage/...
-  return `${BASE_URL}${path}`
+  if (path.startsWith('http')) return path
+  const BASE_URL = import.meta.env.VITE_STORAGE_URL || 'http://127.0.0.1:8000'
+  return `${BASE_URL}/${path.replace(/^\//, '')}`
 }
 
-// Gestionnaire d'erreur d'image
 function handleImageError(e) {
   e.target.style.display = 'none'
   e.target.parentElement.innerHTML = typeConfig.image.icon
@@ -384,60 +446,60 @@ function handleImageError(e) {
 const typeTabs = computed(() => [
   {
     key: '', label: 'Tous', count: counts.value.all,
-    icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+    icon: `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
     </svg>`,
   },
   {
     key: 'image', label: 'Images', count: counts.value.image,
-    icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    icon: `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
     </svg>`,
   },
   {
     key: 'video', label: 'Vidéos', count: counts.value.video,
-    icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+    icon: `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
     </svg>`,
   },
   {
     key: 'audio', label: 'Audio', count: counts.value.audio,
-    icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/>
+    icon: `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/>
     </svg>`,
   },
   {
     key: 'document', label: 'Documents', count: counts.value.document,
-    icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+    icon: `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
     </svg>`,
   },
 ])
 
 const typeConfig = {
-  image: { 
-    bg: '#EEF2FF', 
-    color: '#4338CA', 
-    badge: 'badge-purple', 
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>` 
+  image: {
+    bg: '#EEF2FF',
+    color: '#4338CA',
+    badge: 'badge-purple',
+    icon: `<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`
   },
-  video: { 
-    bg: '#FEF2F2', 
-    color: '#DC2626', 
-    badge: 'badge-red', 
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>` 
+  video: {
+    bg: '#FEF2F2',
+    color: '#DC2626',
+    badge: 'badge-red',
+    icon: `<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>`
   },
-  audio: { 
-    bg: '#F0FDF4', 
-    color: '#16A34A', 
-    badge: 'badge-green', 
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>` 
+  audio: {
+    bg: '#F0FDF4',
+    color: '#16A34A',
+    badge: 'badge-green',
+    icon: `<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>`
   },
-  document: { 
-    bg: '#FEF3C7', 
-    color: '#D97706', 
-    badge: 'badge-yellow', 
-    icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>` 
+  document: {
+    bg: '#FEF3C7',
+    color: '#D97706',
+    badge: 'badge-yellow',
+    icon: `<svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`
   },
 }
 
@@ -450,10 +512,10 @@ function formatSize(bytes) {
 
 function formatDate(date) {
   if (!date) return '—'
-  return new Date(date).toLocaleDateString('fr-FR', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: '2-digit' 
+  return new Date(date).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: '2-digit'
   })
 }
 
@@ -470,6 +532,7 @@ async function loadMedia(page = 1) {
     if (auth.user?.ministere_id) params.ministere_id = auth.user.ministere_id
     if (activeType.value) params.type = activeType.value
     if (search.value) params.search = search.value
+    if (visibilityFilter.value) params.visibility = visibilityFilter.value
 
     const { data } = await api.get('/ministry/media', { params })
     const result = data.data
@@ -493,6 +556,7 @@ async function loadMedia(page = 1) {
 async function loadCounts() {
   try {
     const base = auth.user?.ministere_id ? { ministere_id: auth.user.ministere_id, per_page: 1 } : { per_page: 1 }
+
     const [all, img, vid, aud, doc] = await Promise.all([
       api.get('/ministry/media', { params: base }),
       api.get('/ministry/media', { params: { ...base, type: 'image' } }),
@@ -500,14 +564,24 @@ async function loadCounts() {
       api.get('/ministry/media', { params: { ...base, type: 'audio' } }),
       api.get('/ministry/media', { params: { ...base, type: 'document' } }),
     ])
+
+    // Compter les visibles et masqués depuis les médias chargés
+    const visibleCount = medias.value.filter(m => m.visible === true).length
+    const hiddenCount = medias.value.filter(m => m.visible === false).length
+
     counts.value = {
       all: all.data.data?.total || 0,
+      visible: visibleCount,
+      hidden: hiddenCount,
       image: img.data.data?.total || 0,
       video: vid.data.data?.total || 0,
       audio: aud.data.data?.total || 0,
       document: doc.data.data?.total || 0,
     }
-  } catch {}
+    console.log(counts.value)
+  } catch (e) {
+    console.error('Erreur chargement compteurs:', e)
+  }
 }
 
 function toggleSelect(media) {
@@ -527,7 +601,18 @@ async function copyUrl(media) {
   showToast('URL copiée !', 'success')
 }
 
-// Upload
+async function toggleVisibility(media) {
+  try {
+    const { data } = await api.patch(`/ministry/media/${media.id}/toggle-visibility`)
+    media.visible = data.data.visible
+    showToast(data.message, 'success')
+    // Recharger les compteurs après changement de visibilité
+    await loadCounts()
+  } catch (e) {
+    showToast('Erreur lors du changement de visibilité', 'error')
+  }
+}
+
 async function handleDrop(e) {
   isDragging.value = false
   const files = Array.from(e.dataTransfer.files)
@@ -542,6 +627,13 @@ async function handleUpload(e) {
 
 async function uploadFiles(files) {
   for (const file of files) {
+    const maxSize = 50 * 1024 * 1024
+    if (file.size > maxSize) {
+      const sizeMB = (file.size / 1024 / 1024).toFixed(2)
+      showToast(`${file.name} dépasse la taille limite (${sizeMB} Mo > 50 Mo)`, 'error')
+      continue
+    }
+
     const upItem = { name: file.name, progress: 0 }
     uploading.value.push(upItem)
 
@@ -557,9 +649,10 @@ async function uploadFiles(files) {
         },
       })
 
-      showToast(`${file.name} uploadé !`, 'success')
+      showToast(`${file.name} uploadé avec succès !`, 'success')
     } catch (e) {
-      showToast(`Erreur : ${file.name}`, 'error')
+      const errorMsg = e.response?.data?.message || `Erreur lors de l'upload de ${file.name}`
+      showToast(errorMsg, 'error')
     } finally {
       uploading.value = uploading.value.filter(u => u !== upItem)
     }
@@ -567,7 +660,6 @@ async function uploadFiles(files) {
   await loadMedia()
 }
 
-// Delete
 function confirmDelete(media) {
   deleteModal.value = { show: true, media, bulk: false, loading: false }
 }
@@ -604,36 +696,92 @@ function changePage(page) {
 
 function showToast(message, type = 'success') {
   toast.value = { show: true, type, message }
-  setTimeout(() => { toast.value.show = false }, 2500)
+  setTimeout(() => { toast.value.show = false }, 5000)
 }
 
 onMounted(() => loadMedia())
 </script>
 
 <style scoped>
+/* Stats row */
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px 20px;
+  min-width: 140px;
+  transition: all .2s;
+}
+
+.stat-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+}
+
+.stat-pill.green {
+  border-color: #BBF7D0;
+  background: #F0FDF4;
+}
+
+.stat-pill.gray {
+  border-color: #E2E8F0;
+}
+
+.stat-pill svg {
+  width: 24px;
+  height: 24px;
+  opacity: .8;
+}
+
+.stat-pill-n {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0F172A;
+  line-height: 1.2;
+}
+
+.stat-pill.green .stat-pill-n {
+  color: #16A34A;
+}
+
+.stat-pill-l {
+  font-size: 12px;
+  color: #64748B;
+}
+
 /* Toolbar */
-.media-toolbar {
+.toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .toolbar-left {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
   background: #F8FAFC;
   padding: 4px;
   border-radius: 10px;
   border: 1px solid #E2E8F0;
-  flex-wrap: wrap;
 }
 
 .toolbar-right {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
@@ -642,37 +790,34 @@ onMounted(() => loadMedia())
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 7px 14px;
   border-radius: 8px;
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
   font-size: 13px;
-  font-weight: 500;
   color: #64748B;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all .12s;
 }
 
 .tab-btn:hover {
-  background: white;
-  color: #0F172A;
+  background: #F1F5F9;
 }
 
 .tab-btn.active {
-  background: white;
+  background: #fff;
+  border-color: #E2E8F0;
   color: #0F172A;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
 }
 
 .tab-count {
-  background: #E2E8F0;
-  color: #475569;
+  background: #F1F5F9;
+  color: #64748B;
   font-size: 11px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 12px;
-  min-width: 20px;
-  text-align: center;
+  padding: 1px 6px;
+  border-radius: 10px;
 }
 
 .tab-btn.active .tab-count {
@@ -680,7 +825,7 @@ onMounted(() => loadMedia())
   color: #4338CA;
 }
 
-/* Search */
+/* Search & filters */
 .search-wrap {
   position: relative;
   display: flex;
@@ -689,33 +834,37 @@ onMounted(() => loadMedia())
 
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   color: #94A3B8;
   pointer-events: none;
 }
 
 .search-input {
-  padding: 9px 12px 9px 36px;
+  padding: 8px 12px 8px 32px;
   border: 1px solid #E2E8F0;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 13px;
   color: #0F172A;
-  background: white;
+  background: #fff;
   outline: none;
-  width: 200px;
-  transition: all 0.2s;
+  width: 180px;
 }
 
 .search-input:focus {
   border-color: #3B82F6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.search-input::placeholder {
-  color: #CBD5E1;
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
 }
 
-/* View toggle */
 .view-toggle {
   display: flex;
   gap: 2px;
@@ -744,27 +893,25 @@ onMounted(() => loadMedia())
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Upload button */
-.upload-label {
-  display: inline-flex;
+.btn-primary {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 18px;
+  gap: 6px;
   background: #1E3A8A;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 10px;
+  padding: 9px 16px;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  transition: background .12s;
 }
 
-.upload-label:hover {
+.btn-primary:hover:not(:disabled) {
   background: #1e40af;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, .2);
 }
 
 /* Drop zone */
@@ -923,6 +1070,12 @@ onMounted(() => loadMedia())
   background: #EFF6FF;
 }
 
+.media-item.inactive {
+  opacity: 0.7;
+  background: #F8FAFC;
+  filter: grayscale(0.15);
+}
+
 .media-checkbox {
   position: absolute;
   top: 10px;
@@ -1000,6 +1153,20 @@ onMounted(() => loadMedia())
   color: #64748B;
 }
 
+.media-visibility {
+  font-size: 10px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.media-visibility.visible {
+  color: #16A34A;
+}
+
+.media-visibility.hidden {
+  color: #DC2626;
+}
+
 .media-actions {
   position: absolute;
   bottom: 50px;
@@ -1056,8 +1223,13 @@ onMounted(() => loadMedia())
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Table view */
@@ -1101,6 +1273,11 @@ onMounted(() => loadMedia())
 
 .table-row.selected {
   background: #EFF6FF;
+}
+
+.table-row.inactive {
+  opacity: 0.6;
+  background: #F8FAFC;
 }
 
 .td {
@@ -1179,6 +1356,27 @@ onMounted(() => loadMedia())
   color: #92400E;
 }
 
+/* Visibility toggle button */
+.visibility-toggle {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #E2E8F0;
+  background: white;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.visibility-toggle.visible {
+  background: #DCFCE7;
+  color: #166534;
+  border-color: #BBF7D0;
+}
+
+.visibility-toggle:hover {
+  transform: scale(1.02);
+}
+
 /* Actions */
 .actions-td {
   display: flex;
@@ -1253,24 +1451,20 @@ onMounted(() => loadMedia())
   color: #64748B;
 }
 
-.page-total {
-  color: #94A3B8;
-  margin-left: 4px;
-}
-
-/* Preview modal */
-.preview-overlay {
+/* Modal preview */
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(4px);
+  padding: 20px;
 }
 
-.preview-modal {
+.modal-preview {
   background: white;
   border-radius: 24px;
   max-width: 800px;
@@ -1282,7 +1476,7 @@ onMounted(() => loadMedia())
   overflow: hidden;
 }
 
-.preview-header {
+.modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1290,13 +1484,13 @@ onMounted(() => loadMedia())
   border-bottom: 1px solid #E2E8F0;
 }
 
-.preview-title {
+.modal-title {
   font-size: 15px;
   font-weight: 600;
   color: #0F172A;
 }
 
-.preview-close {
+.modal-close {
   width: 36px;
   height: 36px;
   border-radius: 10px;
@@ -1310,7 +1504,7 @@ onMounted(() => loadMedia())
   transition: all 0.2s;
 }
 
-.preview-close:hover {
+.modal-close:hover {
   background: #E2E8F0;
   color: #0F172A;
 }
@@ -1348,7 +1542,13 @@ onMounted(() => loadMedia())
   font-weight: 500;
 }
 
-.preview-footer {
+.preview-visibility-info {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #64748B;
+}
+
+.modal-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1406,19 +1606,8 @@ onMounted(() => loadMedia())
   box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
 }
 
-/* Modal suppression */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  backdrop-filter: blur(4px);
-}
-
-.modal {
+/* Modal confirm */
+.modal-confirm {
   background: white;
   border-radius: 24px;
   padding: 32px;
@@ -1443,41 +1632,11 @@ onMounted(() => loadMedia())
   color: #DC2626;
 }
 
-.modal-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #0F172A;
-  margin-bottom: 8px;
-}
-
-.modal-sub {
-  font-size: 14px;
-  color: #64748B;
-  margin-bottom: 4px;
-}
-
 .modal-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
   margin-top: 28px;
-}
-
-.btn-secondary {
-  padding: 10px 20px;
-  border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  background: white;
-  font-size: 13px;
-  font-weight: 500;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-  background: #F8FAFC;
-  border-color: #CBD5E1;
 }
 
 .btn-danger {
@@ -1505,6 +1664,32 @@ onMounted(() => loadMedia())
 .btn-danger:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 20px;
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0F172A;
+  margin: 0;
+}
+
+.empty-sub {
+  font-size: 14px;
+  color: #64748B;
+  margin: 0 0 8px 0;
 }
 
 /* Toast */
@@ -1535,63 +1720,15 @@ onMounted(() => loadMedia())
   border: 1px solid #FECACA;
 }
 
-/* Empty state */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 60px 20px;
-  text-align: center;
-  background: white;
-  border: 1px solid #E2E8F0;
-  border-radius: 20px;
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s;
 }
 
-.empty-illustration {
-  width: 120px;
-  height: 120px;
-  border-radius: 60px;
-  background: #F8FAFC;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94A3B8;
-  margin-bottom: 8px;
-}
-
-.empty-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #0F172A;
-  margin: 0;
-}
-
-.empty-description {
-  font-size: 14px;
-  color: #64748B;
-  margin: 0 0 8px 0;
-}
-
-.empty-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #1E3A8A;
-  color: white;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s;
-  margin-top: 8px;
-}
-
-.empty-action:hover {
-  background: #1e40af;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 /* Spinner */
@@ -1606,57 +1743,47 @@ onMounted(() => loadMedia())
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Animations */
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.3s;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(10px);
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .media-toolbar {
+  .toolbar {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .toolbar-right {
     flex-direction: column;
   }
-  
+
   .search-input {
     width: 100%;
   }
-  
+
   .media-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
-  
+
   .table-head {
     display: none;
   }
-  
+
   .table-row {
     flex-wrap: wrap;
     gap: 10px;
   }
-  
+
   .td {
     width: 100% !important;
   }
-  
+
   .list-file {
     width: 100%;
   }
-  
+
   .actions-td {
     justify-content: flex-end;
   }

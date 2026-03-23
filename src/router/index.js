@@ -97,6 +97,25 @@ const routes = [
         name: "Users",
         component: () => import("@/views/users/UsersView.vue"),
       },
+      {
+        path: "/notifications",
+        component: () => import("@/views/notifications/NotificationsView.vue"),
+      },
+      {
+        path: "/profile",
+        component: () => import("@/views/profile/ProfileView.vue"),
+      },
+      {
+        path: "/logs",
+        component: () => import("@/views/logs/LogsView.vue"),
+        meta: { superAdmin: true },
+      },
+      {
+        path: "/comments",
+        name: "Comments",
+        component: () => import("@/views/messages/CommentsView.vue"),
+        meta: { requiresAuth: true },
+      },
       //   Super admin
       {
         path: "admin/ministeres",
